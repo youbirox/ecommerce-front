@@ -1,19 +1,66 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
-import Home from "../pages/Home";
+import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
+
+import MainLayout from "../layouts/MainLayout";
+
 import Login from "../pages/Login";
-import Register from "../pages/Register";
+import Products from "../pages/Products";
+import Orders from "../pages/Orders";
+import AdminProducts from "../pages/AdminProducts";
+import GuestRoute from "./GuestRoute";
+import ProductDetails from "../pages/ProductDetails";
+import Cart from "../pages/Cart";
 
 function AppRoutes() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-            </Routes>
-        </BrowserRouter>
-    );
+  return (
+    <Routes>
+      {/* Page sans Navbar */}
+
+      <Route
+        path="/login"
+        element={
+          <GuestRoute>
+            <Login />
+          </GuestRoute>
+        }
+      />
+
+      {/* Pages avec Navbar */}
+
+      <Route element={<MainLayout />}>
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
+
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/products"
+          element={
+            <AdminRoute>
+              <AdminProducts />
+            </AdminRoute>
+          }
+        />
+      </Route>
+    </Routes>
+  );
 }
 
 export default AppRoutes;
