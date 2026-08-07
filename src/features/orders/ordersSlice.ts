@@ -4,8 +4,10 @@ import type { OrderResponse, CreateOrderRequest } from "./ordersTypes";
 
 import {
   createOrder as createOrderApi,
+  getAllOrders,
   getMyOrders as getMyOrdersApi,
   getOrderById,
+  updateOrderStatus,
 } from "./ordersApi";
 
 interface OrderState {
@@ -43,6 +45,20 @@ export const fetchMyOrders = createAsyncThunk(
 
   async () => {
     return await getMyOrdersApi();
+  },
+);
+export const fetchAllOrders = createAsyncThunk(
+  "orders/fetchAllOrders",
+
+  async () => {
+    return await getAllOrders();
+  },
+);
+export const changeOrderStatus = createAsyncThunk(
+  "orders/changeOrderStatus",
+
+  async ({ id, status }: { id: number; status: string }) => {
+    return await updateOrderStatus(id, status);
   },
 );
 
@@ -100,6 +116,32 @@ const orderSlice = createSlice({
         state.loading = false;
 
         state.error = "Erreur chargement commande";
+      })
+
+      .addCase(fetchAllOrders.pending, (state) => {
+        state.loading = true;
+      })
+
+      .addCase(fetchAllOrders.fulfilled, (state, action) => {
+        state.loading = false;
+
+        state.orders = action.payload;
+      })
+
+      .addCase(fetchAllOrders.rejected, (state) => {
+        state.loading = false;
+
+        state.error = "Erreur chargement commandes";
+      })
+
+      .addCase(changeOrderStatus.fulfilled, (state, action) => {
+        const index = state.orders.findIndex(
+          (order) => order.id === action.payload.id,
+        );
+
+        if (index !== -1) {
+          state.orders[index] = action.payload;
+        }
       })
 
       .addCase(createOrder.pending, (state) => {

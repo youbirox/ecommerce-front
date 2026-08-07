@@ -11,7 +11,7 @@ export const ENDPOINTS = {
 
   ORDERS: {
     CREATE: "/orders",
-
+    GET_ALL: "/orders",
     GET_BY_ID: "/orders",
     MY_ORDERS: "/orders/my-orders",
   },

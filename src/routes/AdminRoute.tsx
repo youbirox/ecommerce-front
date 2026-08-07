@@ -7,9 +7,13 @@ interface Props {
 }
 
 function AdminRoute({ children }: Props) {
-  const { user } = useAuth();
+  const { user, initialized } = useAuth();
 
-  if (user?.role !== "ADMIN") {
+  if (!initialized) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user || user.role !== "ADMIN") {
     return <Navigate to="/" replace />;
   }
 

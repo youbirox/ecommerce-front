@@ -29,5 +29,7 @@ export interface OrderResponse {
 
   createdAt: string;
 
+  userEmail: string;
+
   items: OrderItemResponse[];
 }
