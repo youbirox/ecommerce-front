@@ -9,3 +9,7 @@ export interface CartItem {
 export interface CartState {
   items: CartItem[];
 }
+
+export interface CartPayload {
+  userId: number;
+}

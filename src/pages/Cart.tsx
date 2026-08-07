@@ -1,117 +1,131 @@
-import { useSelector } from "react-redux";
-
-import type { RootState } from "../app/store";
-
-import {
-  increaseQuantity,
-  decreaseQuantity,
-  removeFromCart,
-} from "../features/cart/cartSlice";
-
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../app/hooks";
-import { createOrder } from "../features/orders/ordersSlice";
-import { clearCart } from "../features/cart/cartSlice";
-
 import { useDispatch } from "react-redux";
 
 import type { AppDispatch } from "../app/store";
 
+import {
+  removeFromCart,
+  increaseQuantity,
+  decreaseQuantity,
+  clearCart,
+} from "../features/cart/cartSlice";
+
+import { useAppSelector } from "../app/hooks";
+
+import { useAuth } from "../features/auth/hooks/useAuth";
+
 function Cart() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const items = useSelector((state: RootState) => state.cart.items);
+  const { user } = useAuth();
 
-  const total = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+  const items = useAppSelector((state) => state.cart.items);
 
-    0,
-  );
-
-  if (items.length === 0) {
+  if (!user) {
     return (
-      <div className="rounded-lg bg-white p-8 text-center shadow">
-        <h1 className="text-2xl font-bold">Votre panier est vide</h1>
+      <div className="p-6 text-center">
+        Veuillez vous connecter pour voir votre panier.
       </div>
     );
   }
 
-  const handleOrder = async () => {
-    const orderData = {
-      items: items.map((item) => ({
-        productId: item.product.id,
-
-        quantity: item.quantity,
-      })),
-    };
-
-    try {
-      await dispatch(createOrder(orderData)).unwrap();
-
-      dispatch(clearCart());
-
-      navigate("/orders");
-    } catch (error) {
-      console.log("Erreur commande", error);
-    }
-  };
+  const total = items.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
+  );
 
   return (
-    <div>
+    <div className="mx-auto max-w-5xl p-6">
       <h1 className="mb-6 text-3xl font-bold">Mon panier</h1>
 
-      <div className="space-y-4">
-        {items.map((item) => (
-          <div
-            key={item.product.id}
-            className="flex items-center justify-between rounded-lg bg-white p-6 shadow"
-          >
-            <div>
-              <h2 className="text-xl font-bold">{item.product.name}</h2>
+      {items.length === 0 ? (
+        <div className="rounded-lg bg-gray-100 p-6 text-center">
+          Votre panier est vide.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {items.map((item) => (
+            <div
+              key={item.product.id}
+              className="flex items-center justify-between rounded-xl bg-white p-5 shadow"
+            >
+              <div className="flex items-center gap-4">
+                {item.product.imageUrl && (
+                  <img
+                    src={item.product.imageUrl}
+                    alt={item.product.name}
+                    className="h-20 w-20 rounded-lg object-cover"
+                  />
+                )}
 
-              <p className="text-gray-600">{item.product.price} €</p>
+                <div>
+                  <h2 className="text-lg font-bold">{item.product.name}</h2>
+
+                  <p className="text-gray-600">{item.product.price} €</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() =>
+                    dispatch(
+                      decreaseQuantity({
+                        productId: item.product.id,
+                        userId: user.id,
+                      }),
+                    )
+                  }
+                  className="rounded bg-gray-200 px-3 py-1"
+                >
+                  -
+                </button>
+
+                <span className="font-bold">{item.quantity}</span>
+
+                <button
+                  onClick={() =>
+                    dispatch(
+                      increaseQuantity({
+                        productId: item.product.id,
+                        userId: user.id,
+                      }),
+                    )
+                  }
+                  className="rounded bg-gray-200 px-3 py-1"
+                >
+                  +
+                </button>
+
+                <button
+                  onClick={() =>
+                    dispatch(
+                      removeFromCart({
+                        productId: item.product.id,
+                        userId: user.id,
+                      }),
+                    )
+                  }
+                  className="rounded bg-red-600 px-3 py-1 text-white"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <div className="mt-6 flex items-center justify-between rounded-xl bg-gray-100 p-5">
+            <div className="text-xl font-bold">
+              Total : {total.toFixed(2)} €
             </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => dispatch(decreaseQuantity(item.product.id))}
-                className="rounded bg-gray-200 px-3 py-1"
-              >
-                -
-              </button>
-
-              <span className="font-bold">{item.quantity}</span>
-
-              <button
-                onClick={() => dispatch(increaseQuantity(item.product.id))}
-                className="rounded bg-gray-200 px-3 py-1"
-              >
-                +
-              </button>
-
-              <button
-                onClick={() => dispatch(removeFromCart(item.product.id))}
-                className="ml-4 rounded bg-red-500 px-3 py-1 text-white"
-              >
-                Supprimer
-              </button>
-            </div>
+            <button
+              onClick={() => dispatch(clearCart(user.id))}
+              className="rounded-lg bg-red-600 px-5 py-2 text-white"
+            >
+              Vider le panier
+            </button>
           </div>
-        ))}
-      </div>
-
-      <div className="mt-8 rounded-lg bg-white p-6 shadow">
-        <h2 className="text-2xl font-bold">Total : {total.toFixed(2)} €</h2>
-
-        <button
-          onClick={handleOrder}
-          className="mt-4 rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
-        >
-          {" "}
-          Passer commande
-        </button>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
