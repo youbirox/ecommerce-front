@@ -12,6 +12,7 @@ import AdminProducts from "../pages/AdminProducts";
 import GuestRoute from "./GuestRoute";
 import ProductDetails from "../pages/ProductDetails";
 import Cart from "../pages/Cart";
+import OrderDetails from "../pages/OrderDetails";
 
 function AppRoutes() {
   return (
@@ -56,6 +57,15 @@ function AppRoutes() {
             <AdminRoute>
               <AdminProducts />
             </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetails />
+            </ProtectedRoute>
           }
         />
       </Route>
