@@ -13,6 +13,7 @@ import GuestRoute from "./GuestRoute";
 import ProductDetails from "../pages/ProductDetails";
 import Cart from "../pages/Cart";
 import OrderDetails from "../pages/OrderDetails";
+import AdminOrders from "../pages/AdminOrders";
 
 function AppRoutes() {
   return (
@@ -66,6 +67,14 @@ function AppRoutes() {
             <ProtectedRoute>
               <OrderDetails />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <AdminRoute>
+              <AdminOrders />
+            </AdminRoute>
           }
         />
       </Route>

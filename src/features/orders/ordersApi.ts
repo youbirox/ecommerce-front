@@ -26,3 +26,30 @@ export const getOrderById = async (id: number): Promise<OrderResponse> => {
 
   return response.data;
 };
+
+// ADMIN - GET ALL ORDERS
+export const getAllOrders = async (): Promise<OrderResponse[]> => {
+
+  const response = await api.get<OrderResponse[]>(
+    ENDPOINTS.ORDERS.GET_ALL
+  );
+
+  return response.data;
+};
+
+// ADMIN - UPDATE STATUS
+
+export const updateOrderStatus = async (
+  id: number,
+  status: string
+): Promise<OrderResponse> => {
+
+  const response = await api.put<OrderResponse>(
+    `${ENDPOINTS.ORDERS.GET_ALL}/${id}/status`,
+    {
+      status,
+    }
+  );
+
+  return response.data;
+};

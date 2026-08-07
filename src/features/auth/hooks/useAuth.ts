@@ -5,7 +5,7 @@ import { logout } from "../authSlice";
 export const useAuth = () => {
   const dispatch = useAppDispatch();
 
-  const { token, user } = useAppSelector((state) => state.auth);
+  const { token, user, initialized } = useAppSelector((state) => state.auth);
 
   const logoutUser = () => {
     dispatch(logout());
@@ -15,7 +15,7 @@ export const useAuth = () => {
     token,
 
     user,
-
+    initialized,
     isAuthenticated: !!token,
 
     logoutUser,
