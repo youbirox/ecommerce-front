@@ -6,6 +6,7 @@ import { setUser } from "../features/auth/authSlice";
 import { logout } from "../features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import { setInitialized } from "../features/auth/authSlice";
+import { loadCart } from "../features/cart/cartSlice";
 
 export default function AuthInitializer() {
   const dispatch = useAppDispatch();
@@ -21,6 +22,8 @@ export default function AuthInitializer() {
     getCurrentUser()
       .then((user) => {
         dispatch(setUser(user));
+
+        dispatch(loadCart(user.id));
       })
       .catch(() => {
         dispatch(logout());

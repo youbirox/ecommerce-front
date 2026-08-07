@@ -5,13 +5,17 @@ import type { AuthResponse, User } from "./authTypes";
 
 interface AuthState {
   token: string | null;
+
   user: User | null;
+
   initialized: boolean;
 }
 
 const initialState: AuthState = {
   token: localStorage.getItem("token"),
+
   user: null,
+
   initialized: false,
 };
 
@@ -24,6 +28,7 @@ const authSlice = createSlice({
     setInitialized: (state) => {
       state.initialized = true;
     },
+
     loginSuccess: (state, action: PayloadAction<AuthResponse>) => {
       state.token = action.payload.token;
 
@@ -37,8 +42,9 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
 
+      state.user = null;
+
       localStorage.removeItem("token");
-      localStorage.removeItem("cart");
     },
   },
 });

@@ -1,10 +1,14 @@
 import type { Product } from "../productsTypes";
+
 import { Link } from "react-router-dom";
+
 import { useDispatch } from "react-redux";
 
 import type { AppDispatch } from "../../../app/store";
 
 import { addToCart } from "../../cart/cartSlice";
+
+import { useAuth } from "../../auth/hooks/useAuth";
 
 interface Props {
   product: Product;
@@ -12,10 +16,27 @@ interface Props {
 
 function ProductCard({ product }: Props) {
   const dispatch = useDispatch<AppDispatch>();
+
+  const { user } = useAuth();
+
+  const handleAddToCart = () => {
+    if (!user) {
+      console.log("Utilisateur non connecté");
+
+      return;
+    }
+
+    dispatch(
+      addToCart({
+        product,
+
+        userId: user.id,
+      }),
+    );
+  };
+
   return (
     <div className="rounded-xl bg-white p-6 shadow-md transition hover:shadow-lg">
-      {/* Image */}
-
       <div className="mb-4 flex h-40 items-center justify-center rounded-lg bg-gray-100">
         {product.imageUrl ? (
           <img
@@ -27,8 +48,6 @@ function ProductCard({ product }: Props) {
           <span className="text-gray-400">No image</span>
         )}
       </div>
-
-      {/* Informations */}
 
       <h2 className="text-xl font-bold text-gray-800">{product.name}</h2>
 
@@ -50,8 +69,9 @@ function ProductCard({ product }: Props) {
       >
         Voir détail
       </Link>
+
       <button
-        onClick={() => dispatch(addToCart(product))}
+        onClick={handleAddToCart}
         className="mt-3 w-full rounded-lg bg-green-600 py-2 text-white hover:bg-green-700"
       >
         Ajouter au panier
