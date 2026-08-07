@@ -5,6 +5,7 @@ import type { OrderResponse, CreateOrderRequest } from "./ordersTypes";
 import {
   createOrder as createOrderApi,
   getMyOrders as getMyOrdersApi,
+  getOrderById,
 } from "./ordersApi";
 
 interface OrderState {
@@ -45,6 +46,14 @@ export const fetchMyOrders = createAsyncThunk(
   },
 );
 
+export const fetchOrderById = createAsyncThunk(
+  "orders/fetchOrderById",
+
+  async (id: number) => {
+    return await getOrderById(id);
+  },
+);
+
 const orderSlice = createSlice({
   name: "orders",
 
@@ -73,6 +82,24 @@ const orderSlice = createSlice({
         state.loading = false;
 
         state.error = "Erreur chargement commandes";
+      })
+
+      .addCase(fetchOrderById.pending, (state) => {
+        state.loading = true;
+
+        state.error = null;
+      })
+
+      .addCase(fetchOrderById.fulfilled, (state, action) => {
+        state.loading = false;
+
+        state.currentOrder = action.payload;
+      })
+
+      .addCase(fetchOrderById.rejected, (state) => {
+        state.loading = false;
+
+        state.error = "Erreur chargement commande";
       })
 
       .addCase(createOrder.pending, (state) => {

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 import { fetchMyOrders } from "../features/orders/ordersSlice";
+import { Link } from "react-router-dom";
 
 function Orders() {
   const dispatch = useAppDispatch();
@@ -50,6 +51,13 @@ function Orders() {
                   {item.quantity}
                 </p>
               ))}
+
+              <Link
+                to={`/orders/${order.id}`}
+                className="text-blue-600 hover:underline"
+              >
+                Voir détail
+              </Link>
             </div>
           </div>
         ))}

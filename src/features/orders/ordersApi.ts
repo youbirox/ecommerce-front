@@ -20,3 +20,9 @@ export const getMyOrders = async (): Promise<OrderResponse[]> => {
 
   return response.data;
 };
+
+export const getOrderById = async (id: number): Promise<OrderResponse> => {
+  const response = await api.get<OrderResponse>(`${ENDPOINTS.ORDERS.GET_BY_ID}/${id}`);
+
+  return response.data;
+};
